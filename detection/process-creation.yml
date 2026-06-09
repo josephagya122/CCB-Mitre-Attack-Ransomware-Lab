@@ -1,0 +1,23 @@
+title: Suspicious PowerShell Spawning from Microsoft Office
+id: e4b23b18-87a2-4a3d-b4f1-938b8123abc1
+status: experimental
+description: Detects a Microsoft Office application spawning a PowerShell process, a classic indicator of a spearphishing macro execution (MITRE T1059.001).
+author: Joseph Agyapong
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_parent:
+        ParentImage|endswith:
+            - '\winword.exe'
+            - '\excel.exe'
+            - '\powerpnt.exe'
+    selection_child:
+        Image|endswith:
+            - '\powershell.exe'
+            - '\pwsh.exe'
+            - '\cmd.exe'
+    condition: selection_parent and selection_child
+falsepositives:
+    - Administrative legacy macro automation (rare in production environments)
+level: critical
